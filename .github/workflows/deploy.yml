@@ -1,0 +1,147 @@
+name: Build & Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      # Rebuild whenever source content or templates change
+      - 'posts/**'
+      - 'src/templates/**'
+      - 'config/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'template.html'
+      # Also run when the workflow itself is first added or updated
+      - '.github/workflows/deploy.yml'
+
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+# Grant the GITHUB_TOKEN permission to deploy Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deployment at a time; cancel any in-progress run on a new push
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # need two commits to detect changed files
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Detect which files changed vs the previous commit so we can do a
+      # targeted rebuild instead of always rebuilding everything.
+      - name: Detect changed files
+        id: changed
+        run: |
+          # On a workflow_dispatch there is no "previous" commit to diff
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "CHANGED_FILES=" >> "$GITHUB_ENV"
+            echo "mode=full"      >> "$GITHUB_OUTPUT"
+          else
+            FILES=$(git diff --name-only HEAD~1 HEAD)
+            echo "CHANGED_FILES<<EOF"  >> "$GITHUB_ENV"
+            echo "$FILES"              >> "$GITHUB_ENV"
+            echo "EOF"                 >> "$GITHUB_ENV"
+
+            # If any template / config changed → force full rebuild
+            if echo "$FILES" | grep -qE '^(src/templates/|config/|template\.html)'; then
+              echo "mode=full"        >> "$GITHUB_OUTPUT"
+            else
+              echo "mode=incremental" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Build site (full)
+        if: steps.changed.outputs.mode == 'full' || github.event_name == 'workflow_dispatch'
+        run: npm run build
+
+      - name: Build site (incremental — posts only)
+        if: steps.changed.outputs.mode == 'incremental'
+        run: npm run build:changed
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+  archive:
+    name: Archive to Wayback Machine / archive.today
+    needs: deploy
+    # Only run if archiving is enabled in config
+    runs-on: ubuntu-latest
+    if: ${{ vars.ARCHIVE_ENABLED == 'true' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read site URL from config
+        id: cfg
+        run: |
+          URL=$(node -e "const c=require('./config/config.json'); console.log(c.site?.url||'')")
+          echo "site_url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Submit to archive.org (Wayback Machine)
+        if: ${{ vars.ARCHIVE_ORG != 'false' }}
+        # Fire-and-forget: use --max-time so a slow API never blocks the run
+        run: |
+          SITE="${{ steps.cfg.outputs.site_url }}"
+          if [ -z "$SITE" ]; then
+            echo "No site URL configured; skipping archive.org submission."
+            exit 0
+          fi
+          echo "Submitting $SITE to archive.org…"
+          # archive.org save API — no key required for basic snapshots
+          curl --silent --max-time 30 --fail-with-body \
+            "https://web.archive.org/save/$SITE" || true
+        # Don't fail the workflow if archiving is unavailable
+        continue-on-error: true
+
+      - name: Submit to archive.today
+        if: ${{ vars.ARCHIVE_TODAY != 'false' }}
+        run: |
+          SITE="${{ steps.cfg.outputs.site_url }}"
+          if [ -z "$SITE" ]; then
+            echo "No site URL configured; skipping archive.today submission."
+            exit 0
+          fi
+          echo "Submitting $SITE to archive.today…"
+          # archive.today submit endpoint
+          curl --silent --max-time 30 --location \
+            --data "url=${SITE}&anyway=1" \
+            "https://archive.today/submit/" || true
+        continue-on-error: true

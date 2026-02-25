@@ -1,0 +1,93 @@
+<!-- BlogSDK Editors Template -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{site.title}} | Editors and Teams</title>
+  <meta name="description" content="Editors and teams behind {{site.title}}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/edwardtufte/tufte-css@v1.8.0/tufte.css"/>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* nav bar */
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .editors-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .editors-list li {
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .editor-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .editor-meta {
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+    article {
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main header section -->
+  <nav>
+    <ul>
+      <li></li> <!-- Some how adding this li, forces the whole navbar to actually be even; before it was barely shifted. -->
+      <li>
+        <a href="/home">Home Page</a>
+      </li>
+      <li>
+        <a href="/articles">Articles</a>
+      </li>
+      <li>
+        <a href="/editors">Editors and Teams</a>
+      </li>
+    </ul>
+  </nav>
+
+  <article>
+    <section>
+      <h1>Editors and Teams</h1>
+      <p class="subtitle">The people behind {{site.title}}</p>
+    </section>
+
+    <section>
+      <ul class="editors-list">
+        {{page.editors}}
+      </ul>
+    </section>
+  </article>
+</body>
+</html>
+<!--
+ * # Creator / License
+ * Made with love by Austin Moore @ AustinSDK under an unlicensed license.
+ * All rights are unreserved, and you may do anything with this software
+ * The full license may be found at /LICENSE
+ *
+ * # (Frontend) Dependencies!
+ * - EdwardTufte: Tufte.css
+ * - Null-Austin: Main project files
+-->
