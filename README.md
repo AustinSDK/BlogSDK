@@ -2,6 +2,19 @@
 
 A minimal static blog generator that builds from Markdown posts to a GitHub Pages site.
 
+## One-time setup (the only manual step)
+
+Before the automatic deployment will work you need to tell GitHub where to publish the site.  
+Do this **once** in the repository settings — you never have to touch it again:
+
+1. Go to **Settings → Pages**
+2. Under **Build and deployment → Source**, select **GitHub Actions**
+3. Save
+
+That's it. From that point on every push to `main` builds and deploys the site automatically — no manual steps, no extra configuration needed.
+
+> **Archiving (optional)** — if you want the live site archived to archive.org / archive.today after each deploy, set the repository variable `ARCHIVE_ENABLED = true` in **Settings → Secrets and variables → Actions → Variables**. Everything else is already wired up.
+
 ## Structure
 
 ```

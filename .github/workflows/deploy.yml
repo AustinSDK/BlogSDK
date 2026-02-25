@@ -11,6 +11,8 @@ on:
       - 'scripts/**'
       - 'package.json'
       - 'template.html'
+      # Also run when the workflow itself is first added or updated
+      - '.github/workflows/deploy.yml'
 
   # Allow manual trigger from the Actions tab
   workflow_dispatch:
