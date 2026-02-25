@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlogSDK</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/edwardtufte/tufte-css@v1.8.0/tufte.css"/> <!-- use a static url cause WHY NOT???? -->
+  <style>
+    html{
+      scroll-behavior: smooth;
+    }
+
+    img{
+      width: 50%;
+    }
+    article#reader-content {
+      padding: 0 !important;
+    }
+    h1:first-of-type{
+      margin-top: 1.3rem !important;
+    }
+    header p a{
+      font-size: 1.5rem;
+      margin-inline: .5rem;
+    }
+
+    /* nav bar */
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    article{
+      width: 80%;
+    }
+
+    #grid{
+      display: flex;
+      gap: 20px;
+    }
+    #grid>*{
+      flex: 0 1 auto
+    }
+
+    #toc{
+      transform: translateX(-400%);
+      text-align: left;
+      /*background-color: wheat;*/
+      height: max-content;
+      position: sticky;
+      top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main header section -->
+  <nav>
+    <ul>
+      <li></li> <!-- Some how adding this li, forces the whole navbar to actually be even; before it was barely shifted. -->
+      <li>
+        <a href="/home">Home Page</a>
+      </li>
+      <li>
+        <a href="/articles">Articles</a>
+      </li>
+      <li>
+        <a href="/editors">Editors and Teams</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- content / toc grid-->
+  <div id="grid">
+    <!-- main reader content -->
+    <article id="reader-content"> <!-- Article for basic keeping i guess :shrug: -->
+        <section id="header">
+          <h1>
+            Pripyat
+          </h1>
+          <p class="subtitle">
+            By <a href="https://github.com/null-austin">Austin Moore</a> @ <a href="https://github.com/austinsdk">AustinSDK</a> <!-- maybe hide the @ or dont show the user's affiliations? -->
+          </p>
+        </section>
+        <section id="content">
+          <!-- im thinking about putting a nice photo right here? Would it look good -->
+          <img src="https://learn.zoner.com/wp-content/uploads/2024/09/chornobyl-the-abandoned-city-of-pripyat.jpg" id="header-photo"> <!-- https://placehold.co/900x450.png -->
+          <h2 id="_toc_h_1">About</h2>
+          <p>
+            Pripyat is located in the Kyiv Oblast providence of Ukraine, near the Russian border providing living space to the families of workers, working on the Chernobyl Nuclear Power Plant. Currently, fully being ran by the Soviet Union.
+          </p>
+          <p>
+            Pripyat contains multiple tourist attactions such as the Pripyat amusement park, along with the marvelous Polissya Hotel, or the Azure swimming pools! 
+          </p>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/October_1996-Swimming_Pool.jpg" alt="A beautiful photo of the Azure Swimming pools!">
+        </section>
+      </article>
+
+      <!-- TOC? --> <!-- Table of contents for any of those non sigma alpha males out there (edit: do i remove this..?)-->
+      <div id="toc">
+        <ul>
+          <li>
+            <a href="#header">Pripyat</a>
+          </li>
+          <li>
+            <a href="#_toc_h_1">About</a>
+          </li>
+        </ul>
+      </div>
+    </body>
+    </html>
+  </div>
+<!--
+ * # Creator / License
+ * Made with love by Austin Moore @ AustinSDK under an unlicensed license. 
+ * All rights are unreserved, and you may doo anything with this software
+ * The full license may be found at /LICENSE
+ * 
+ * # (Frontend) Dependencies!
+ * - EdwardTufte: Tufte.css
+ * - Null-Austin: Main project files
+-->
