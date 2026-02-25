@@ -16,6 +16,10 @@
       "austinsdk":{
         "display":"Austin SDK",
         "contact": "https://github.com/austinsdk"
+      },
+      "bot-co":{
+        "display":"Bot Co.",
+        "contact": "https://github.com/bots"
       }
     }
   }
