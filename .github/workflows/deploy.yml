@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       # Rebuild whenever source content or templates change
-      - 'posts/**'
+      - 'posts/**' 
       - 'src/templates/**'
       - 'config/**'
       - 'scripts/**'
