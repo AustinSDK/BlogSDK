@@ -1,3 +1,10 @@
+---
+title: "Pripyat"
+date: 1986-04-26
+author: austin@austinsdk.me
+description: "A look at the abandoned city of Pripyat, Ukraine — ghost town near Chernobyl."
+short: pri
+---
 ![Header photo](https://learn.zoner.com/wp-content/uploads/2024/09/chornobyl-the-abandoned-city-of-pripyat.jpg)
 
 ## About
