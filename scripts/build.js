@@ -23,6 +23,7 @@ const fs   = require('fs');
 const path = require('path');
 const { marked }  = require('marked');
 const matter      = require('gray-matter');
+const { minify } = require('html-minifier-next');
 
 // ── Paths ──────────────────────────────────────────────────────────────────
 const ROOT      = path.join(__dirname, '..');
@@ -76,9 +77,22 @@ function ensureDir(dir) {
 }
 
 /** Write a file, creating parent dirs as needed */
-function write(filePath, content) {
+async function write(filePath, content) {
+  const result = await minify(content, {
+    removeAttributeQuotes: true,
+    removeOptionalTags: true,
+    removeComments: true,
+    collapseWhitespace: true,
+    removeEmptyAttributes: true,
+    minifyCSS: true,
+    minifyJS: true,
+    removeRedundantAttributes: true,
+    removeScriptTypeAttributes: true,
+    removeStyleLinkTypeAttributes: true,
+    useShortDoctype: true
+  });
   ensureDir(path.dirname(filePath));
-  fs.writeFileSync(filePath, content, 'utf8');
+  fs.writeFileSync(filePath, result, 'utf8');
   console.log('  Built:', path.relative(ROOT, filePath));
 }
 
@@ -134,7 +148,7 @@ function buildToc(html) {
  * Parse and build a single post.
  * Returns a post-info object for use in index pages.
  */
-function buildPost(filename) {
+async function buildPost(filename) {
   const raw   = fs.readFileSync(path.join(POSTS_DIR, filename), 'utf8');
   const { data: fm, content: mdContent } = matter(raw);
 
@@ -179,20 +193,20 @@ function buildPost(filename) {
   });
 
   // Primary URL: /a/{slug}/
-  write(path.join(OUT_DIR, 'a', slug, 'index.html'), html);
+  await write(path.join(OUT_DIR, 'a', slug, 'index.html'), html);
 
   // Short ID redirect (if different from slug)
   if (id !== slug) {
-    write(path.join(OUT_DIR, 'a', id, 'index.html'), redirect(`/a/${slug}/`));
+    await write(path.join(OUT_DIR, 'a', id, 'index.html'), redirect(`/a/${slug}/`));
   }
 
   // Short alias redirect (if defined and different)
   if (short && short !== slug && short !== id) {
-    write(path.join(OUT_DIR, 'a', short, 'index.html'), redirect(`/a/${slug}/`));
+    await write(path.join(OUT_DIR, 'a', short, 'index.html'), redirect(`/a/${slug}/`));
   }
 
   // /article/{slug}/ → /a/{slug}/
-  write(path.join(OUT_DIR, 'article', slug, 'index.html'), redirect(`/a/${slug}/`));
+  await write(path.join(OUT_DIR, 'article', slug, 'index.html'), redirect(`/a/${slug}/`));
 
   return {
     title,
@@ -211,7 +225,7 @@ function buildPost(filename) {
 }
 
 /** Build home, articles, and editors index pages */
-function buildIndexPages(posts) {
+async function buildIndexPages(posts) {
   // Sort newest first
   const sorted = [...posts].sort((a, b) => {
     if (!a.date && !b.date) return 0;
@@ -226,7 +240,7 @@ function buildIndexPages(posts) {
     .map(p => postListItem(p))
     .join('\n        ');
 
-  write(
+  await write(
     path.join(OUT_DIR, 'home', 'index.html'),
     render(tmpl('home'), {
       site: { title: site.title || 'BlogSDK', description: site.description || '' },
@@ -235,11 +249,11 @@ function buildIndexPages(posts) {
   );
 
   // Redirect root to /home/
-  write(path.join(OUT_DIR, 'index.html'), redirect('/home/'));
+  await write(path.join(OUT_DIR, 'index.html'), redirect('/home/'));
 
   // ── articles ──
   const allPostsHtml = sorted.map(p => postListItem(p)).join('\n        ');
-  write(
+  await write(
     path.join(OUT_DIR, 'articles', 'index.html'),
     render(tmpl('articles'), {
       site: { title: site.title || 'BlogSDK' },
@@ -261,7 +275,7 @@ function buildIndexPages(posts) {
     })
     .join('\n        ');
 
-  write(
+  await write(
     path.join(OUT_DIR, 'editors', 'index.html'),
     render(tmpl('editors'), {
       site: { title: site.title || 'BlogSDK' },
@@ -297,7 +311,7 @@ const incrementalMode = args.includes('--changed');
  *   - Any file in src/templates or config/ changed → full rebuild
  *   - Only files in posts/ changed              → rebuild those posts + indexes
  */
-function run() {
+async function run() {
   ensureDir(OUT_DIR);
 
   let allPostFiles = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.md'));
@@ -328,9 +342,9 @@ function run() {
           cachedPosts = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
         }
 
-        const builtNow = changedPosts
+        const builtNow = await Promise.all(changedPosts
           .filter(f => allPostFiles.includes(f))
-          .map(buildPost);
+          .map(buildPost));
 
         // Merge: replace cached entries for rebuilt posts, keep rest
         const builtSlugs = new Set(builtNow.map(p => p.slug));
@@ -339,7 +353,7 @@ function run() {
           ...builtNow,
         ];
 
-        buildIndexPages(merged);
+        await buildIndexPages(merged);
         fs.writeFileSync(manifestPath, JSON.stringify(merged, null, 2));
         return;
       }
@@ -350,8 +364,8 @@ function run() {
 
   // Full rebuild
   console.log('Building all posts…');
-  const posts = allPostFiles.map(buildPost);
-  buildIndexPages(posts);
+  const posts = await Promise.all(allPostFiles.map(buildPost));
+  await buildIndexPages(posts);
 
   // Save manifest for future incremental builds
   fs.writeFileSync(

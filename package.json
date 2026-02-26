@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
+    "html-minifier-next": "^5.1.5",
     "marked": "^12.0.0"
   }
 }
