@@ -1,21 +1,128 @@
-<h1 id="license">License</h1>
-<p>This is free and unencumbered software released into the public domain.</p>
-<p>Anyone is free to copy, modify, publish, use, compile, sell, or
-distribute this software, either in source code form or as a compiled
-binary, for any purpose, commercial or non-commercial, and by any
-means.</p>
-<p>In jurisdictions that recognize copyright laws, the author or authors
-of this software dedicate any and all copyright interest in the
-software to the public domain. We make this dedication for the benefit
-of the public at large and to the detriment of our heirs and
-successors. We intend this dedication to be an overt act of
-relinquishment in perpetuity of all present and future rights to this
-software under copyright law.</p>
-<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.</p>
-<p>For more information, please refer to <a href="https://unlicense.org">https://unlicense.org</a></p>
+<!-- BlogSDK Home Template -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{site.title}} | 404</title>
+  <meta name="description" content="{{site.description}}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/edwardtufte/tufte-css@v1.8.0/tufte.css"/>
+  <style>
+
+    article{
+      padding: 0 !important;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    h1:first-of-type {
+      margin-top: 1.3rem !important;
+    }
+
+    article{
+      padding: 0 !important;
+    }
+
+    /* nav bar */
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .post-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .post-list li {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 1rem;
+    }
+
+    .post-list .post-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .post-meta {
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+    .post-description {
+      margin-top: 0.4rem;
+    }
+
+    article {
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main header section -->
+  <nav>
+    <ul>
+      <li></li> <!-- Some how adding this li, forces the whole navbar to actually be even; before it was barely shifted. -->
+      <li>
+        <a href="/home">Home Page</a>
+      </li>
+      <li>
+        <a href="/articles">Articles</a>
+      </li>
+      <li>
+        <a href="/editors">Editors and Teams</a>
+      </li>
+    </ul>
+  </nav>
+
+  <article>
+    <section>
+      <h1>{{site.title}}</h1>
+      <p class="subtitle">{{site.description}}</p>
+    </section>
+
+    <section>
+        <h1 id="license">License</h1>
+        <p>This is free and unencumbered software released into the public domain.</p>
+        <p>Anyone is free to copy, modify, publish, use, compile, sell, or
+        distribute this software, either in source code form or as a compiled
+        binary, for any purpose, commercial or non-commercial, and by any
+        means.</p>
+        <p>In jurisdictions that recognize copyright laws, the author or authors
+        of this software dedicate any and all copyright interest in the
+        software to the public domain. We make this dedication for the benefit
+        of the public at large and to the detriment of our heirs and
+        successors. We intend this dedication to be an overt act of
+        relinquishment in perpetuity of all present and future rights to this
+        software under copyright law.</p>
+        <p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+        IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+        OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+        ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+        OTHER DEALINGS IN THE SOFTWARE.</p>
+        <p>For more information, please refer to <a href="https://unlicense.org">https://unlicense.org</a></p>
+    </section>
+  </article>
+</body>
+</html>
+<!--
+ * # Creator / License
+ * Made with love by Austin Moore @ AustinSDK under an unlicensed license.
+ * All rights are unreserved, and you may do anything with this software
+ * The full license may be found at /LICENSE
+ *
+ * # (Frontend) Dependencies!
+ * - EdwardTufte: Tufte.css
+ * - Null-Austin: Main project files
+-->
