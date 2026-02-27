@@ -5,7 +5,7 @@
     "url": "https://austinsdk.github.io/BlogSDK"
   },
   "archive": {
-    "enabled": false,
+    "enabled": true,
     "archive_org": true,
     "archive_today": true
   },
