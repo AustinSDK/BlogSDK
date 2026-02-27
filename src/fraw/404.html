@@ -68,29 +68,15 @@
 </head>
 <body>
   <!-- Main header section -->
-  <nav>
-    <ul>
-      <li></li> <!-- Some how adding this li, forces the whole navbar to actually be even; before it was barely shifted. -->
-      <li>
-        <a href="/home">Home Page</a>
-      </li>
-      <li>
-        <a href="/articles">Articles</a>
-      </li>
-      <li>
-        <a href="/editors">Editors and Teams</a>
-      </li>
-    </ul>
-  </nav>
+  {% include '../src/fraw/header.html' %}
 
   <article>
     <section>
       <h1>{{site.title}}</h1>
-      <p class="subtitle">{{site.description}}</p>
+      <p class="subtitle">Error 404</p>
     </section>
 
     <section>
-      <h2>Error 404</h2>
       <p>Now wait a second...? Why are you looking here? There is nothing here?</p>
       <img src="https://i.ytimg.com/vi/-hF2qhio5RU/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDd4dOurruzSdr62ADACkYLprW4Og" alt="" srcset="">
     </section>

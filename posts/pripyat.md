@@ -5,7 +5,7 @@ author: austin@austinsdk.me
 description: "A look at the abandoned city of Pripyat, Ukraine — ghost town near Chernobyl."
 short: pri
 ---
-![Header photo](https://learn.zoner.com/wp-content/uploads/2024/09/chornobyl-the-abandoned-city-of-pripyat.jpg)
+![A beautiful photo of the Azure Swimming pools!](/images/chernobyl1.webp)
 
 ## About
 
@@ -13,4 +13,4 @@ Pripyat is located in the Kyiv Oblast providence of Ukraine, near the Russian bo
 
 Pripyat contains multiple tourist attactions such as the Pripyat amusement park, along with the marvelous Polissya Hotel, or the Azure swimming pools!
 
-![A beautiful photo of the Azure Swimming pools!](https://upload.wikimedia.org/wikipedia/commons/7/73/October_1996-Swimming_Pool.jpg)
+![A beautiful photo of the Azure Swimming pools!](/images/chernobyl2.webp)
