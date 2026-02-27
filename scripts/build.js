@@ -6,14 +6,14 @@
  * Writes: /pages
  *
  * Article URLs (all resolve to the same content):
- *   /a/{slug}        primary — slugified title
- *   /a/{id}          short alphanumeric ID (redirect → slug)
- *   /a/{short}       optional frontmatter alias  (redirect → slug)
- *   /article/{slug}  long-form alias             (redirect → /a/{slug})
+ *   /a/{slug}        primary - slugified title
+ *   /a/{id}          short alphanumeric ID (redirect -> slug)
+ *   /a/{short}       optional frontmatter alias  (redirect -> slug)
+ *   /article/{slug}  long-form alias             (redirect -> /a/{slug})
  *
  * Run:
- *   node scripts/build.js               — full rebuild
- *   node scripts/build.js --changed     — only rebuild files that changed
+ *   node scripts/build.js               - full rebuild
+ *   node scripts/build.js --changed     - only rebuild files that changed
  *     (pass changed file paths as extra args, or reads CHANGED_FILES env var)
  */
 
@@ -29,6 +29,7 @@ const { minify } = require('html-minifier-next');
 const ROOT      = path.join(__dirname, '..');
 const POSTS_DIR = path.join(ROOT, 'posts');
 const TMPL_DIR  = path.join(ROOT, 'src', 'templates');
+const FRAW_DIR  = path.join(ROOT, 'src', 'fraw');
 const CFG_FILE  = path.join(ROOT, 'config', 'config.json');
 const OUT_DIR   = path.join(ROOT, 'pages');
 
@@ -94,6 +95,30 @@ async function write(filePath, content) {
   ensureDir(path.dirname(filePath));
   fs.writeFileSync(filePath, result, 'utf8');
   console.log('  Built:', path.relative(ROOT, filePath));
+}
+
+/** Recursively copy files from src/fraw to pages, preserving structure */
+function copyFrawFiles() {
+  if (!fs.existsSync(FRAW_DIR)) return;
+
+  function walkDir(srcDir, outRelative = '') {
+    const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const srcPath = path.join(srcDir, entry.name);
+      const outPath = path.join(OUT_DIR, outRelative, entry.name);
+
+      if (entry.isDirectory()) {
+        walkDir(srcPath, path.join(outRelative, entry.name));
+      } else {
+        ensureDir(path.dirname(outPath));
+        fs.copyFileSync(srcPath, outPath);
+        console.log('  Copied:', path.relative(ROOT, outPath));
+      }
+    }
+  }
+
+  walkDir(FRAW_DIR);
 }
 
 /** Load a template by name (without extension) */
@@ -328,7 +353,11 @@ async function run() {
       f === 'template.html',
     );
 
-    if (!needsFullRebuild) {
+    const needsFrawCopy = changedFiles.some(f =>
+      f.startsWith('src/fraw/'),
+    );
+
+    if (!needsFullRebuild && !needsFrawCopy) {
       const changedPosts = changedFiles
         .filter(f => f.startsWith('posts/') && f.endsWith('.md'))
         .map(f => path.basename(f));
@@ -359,13 +388,19 @@ async function run() {
       }
     }
 
-    console.log('Full rebuild triggered by template/config changes.');
+    if (needsFullRebuild || needsFrawCopy) {
+      console.log('Full rebuild triggered by template/config/fraw changes.');
+    }
   }
 
   // Full rebuild
   console.log('Building all posts…');
   const posts = await Promise.all(allPostFiles.map(buildPost));
   await buildIndexPages(posts);
+
+  // Copy static fraw files
+  console.log('Copying fraw files…');
+  copyFrawFiles();
 
   // Save manifest for future incremental builds
   fs.writeFileSync(

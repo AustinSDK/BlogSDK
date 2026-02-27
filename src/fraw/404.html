@@ -1,0 +1,105 @@
+<!-- BlogSDK Home Template -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{site.title}} | 404</title>
+  <meta name="description" content="{{site.description}}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/edwardtufte/tufte-css@v1.8.0/tufte.css"/>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    h1:first-of-type {
+      margin-top: 1.3rem !important;
+    }
+
+    article{
+      padding: 0 !important;
+    }
+
+    /* nav bar */
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .post-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .post-list li {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 1rem;
+    }
+
+    .post-list .post-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .post-meta {
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+    .post-description {
+      margin-top: 0.4rem;
+    }
+
+    article {
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main header section -->
+  <nav>
+    <ul>
+      <li></li> <!-- Some how adding this li, forces the whole navbar to actually be even; before it was barely shifted. -->
+      <li>
+        <a href="/home">Home Page</a>
+      </li>
+      <li>
+        <a href="/articles">Articles</a>
+      </li>
+      <li>
+        <a href="/editors">Editors and Teams</a>
+      </li>
+    </ul>
+  </nav>
+
+  <article>
+    <section>
+      <h1>{{site.title}}</h1>
+      <p class="subtitle">{{site.description}}</p>
+    </section>
+
+    <section>
+      <h2>Error 404</h2>
+      <p>Now wait a second...? Why are you looking here? There is nothing here?</p>
+      <img src="https://i.ytimg.com/vi/-hF2qhio5RU/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDd4dOurruzSdr62ADACkYLprW4Og" alt="" srcset="">
+    </section>
+  </article>
+</body>
+</html>
+<!--
+ * # Creator / License
+ * Made with love by Austin Moore @ AustinSDK under an unlicensed license.
+ * All rights are unreserved, and you may do anything with this software
+ * The full license may be found at /LICENSE
+ *
+ * # (Frontend) Dependencies!
+ * - EdwardTufte: Tufte.css
+ * - Null-Austin: Main project files
+-->
