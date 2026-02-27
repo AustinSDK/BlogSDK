@@ -103,7 +103,7 @@ jobs:
     needs: deploy
     # Only run if archiving is enabled in config
     runs-on: ubuntu-latest
-    if: ${{ vars.ARCHIVE_ENABLED == 'true' }}
+    if: true
 
     steps:
       - name: Checkout repository
