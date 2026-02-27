@@ -79,20 +79,7 @@
 </head>
 <body>
   <!-- Main header section -->
-  <nav>
-    <ul>
-      <li></li> <!-- Some how adding this li, forces the whole navbar to actually be even; before it was barely shifted. -->
-      <li>
-        <a href="/home">Home Page</a>
-      </li>
-      <li>
-        <a href="/articles">Articles</a>
-      </li>
-      <li>
-        <a href="/editors">Editors and Teams</a>
-      </li>
-    </ul>
-  </nav>
+  {% include '../src/fraw/header.html' %}
 
   <!-- content / toc grid-->
   <div id="grid">

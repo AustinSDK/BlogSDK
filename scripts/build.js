@@ -64,12 +64,73 @@ function shortId(str) {
   return (Math.abs(h) >>> 0).toString(36).slice(0, 6).padStart(4, '0');
 }
 
-/** Replace {{dotted.key}} placeholders in a template string */
+/** Replace {{dotted.key}} placeholders and {% include 'name' %} in a template string */
 function render(tmpl, vars) {
-  return tmpl.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
-    const val = key.trim().split('.').reduce((o, k) => o?.[k], vars);
+  let result = tmpl;
+
+  // Process includes recursively
+  result = result.replace(/\{%\s*include\s+['"]([^'"]+)['"](\s*%\})?\s*/g, (match, name) => {
+    try {
+      let includePath;
+      
+      // If path starts with /, ../, ./, treat as relative to src directory
+      if (name.startsWith('/') || name.startsWith('../') || name.startsWith('./')) {
+        includePath = path.resolve(path.join(ROOT, 'src'), name);
+      } else {
+        // Otherwise, look in templates directory
+        includePath = path.join(TMPL_DIR, name);
+        // If not found and no extension given, try adding .html
+        if (!fs.existsSync(includePath) && !path.extname(name)) {
+          includePath = path.join(TMPL_DIR, `${name}.html`);
+        }
+      }
+      
+      const includeContent = fs.readFileSync(includePath, 'utf8');
+      // Recursively process includes in the included file
+      return render(includeContent, vars);
+    } catch (e) {
+      console.warn(`Warning: Could not load include '${name}': ${e.message}`);
+      return '';
+    }
+  });
+
+  // Replace variables and function calls
+  result = result.replace(/\{\{([^}]+)\}\}/g, (_, expr) => {
+    expr = expr.trim();
+    
+    // Check if it's a function call: functionName(args)
+    const funcMatch = expr.match(/^(\w+)\((.*)\)$/);
+    if (funcMatch && vars.__functions && vars.__functions[funcMatch[1]]) {
+      try {
+        const func = vars.__functions[funcMatch[1]];
+        const argsStr = funcMatch[2];
+        // Parse simple arguments (strings, numbers, variable references)
+        const args = argsStr.split(',').map(arg => {
+          arg = arg.trim();
+          if (arg.startsWith('"') || arg.startsWith("'")) {
+            return arg.slice(1, -1); // Remove quotes
+          } else if (!isNaN(arg)) {
+            return Number(arg);
+          } else {
+            // Variable reference
+            const val = arg.split('.').reduce((o, k) => o?.[k], vars);
+            return val;
+          }
+        });
+        const result = func(...args);
+        return result != null ? result : '';
+      } catch (e) {
+        console.warn(`Warning: Error calling function ${funcMatch[1]}: ${e.message}`);
+        return '';
+      }
+    }
+    
+    // Regular variable lookup
+    const val = expr.split('.').reduce((o, k) => o?.[k], vars);
     return val != null ? val : '';
   });
+
+  return result;
 }
 
 /** Ensure a directory (and parents) exists */
@@ -97,8 +158,8 @@ async function write(filePath, content) {
   console.log('  Built:', path.relative(ROOT, filePath));
 }
 
-/** Recursively copy files from src/fraw to pages, preserving structure */
-function copyFrawFiles() {
+/** Recursively copy and process fraw files from src/fraw to pages, preserving structure */
+function copyFrawFiles(vars) {
   if (!fs.existsSync(FRAW_DIR)) return;
 
   function walkDir(srcDir, outRelative = '') {
@@ -112,8 +173,16 @@ function copyFrawFiles() {
         walkDir(srcPath, path.join(outRelative, entry.name));
       } else {
         ensureDir(path.dirname(outPath));
-        fs.copyFileSync(srcPath, outPath);
-        console.log('  Copied:', path.relative(ROOT, outPath));
+        // Process HTML and Markdown files through template engine, copy others as-is
+        if (entry.name.endsWith('.html') || entry.name.endsWith('.md')) {
+          const content = fs.readFileSync(srcPath, 'utf8');
+          const rendered = render(content, vars);
+          fs.writeFileSync(outPath, rendered, 'utf8');
+          console.log('  Processed:', path.relative(ROOT, outPath));
+        } else {
+          fs.copyFileSync(srcPath, outPath);
+          console.log('  Copied:', path.relative(ROOT, outPath));
+        }
       }
     }
   }
@@ -398,9 +467,11 @@ async function run() {
   const posts = await Promise.all(allPostFiles.map(buildPost));
   await buildIndexPages(posts);
 
-  // Copy static fraw files
-  console.log('Copying fraw files…');
-  copyFrawFiles();
+  // Process fraw files through template engine
+  console.log('Processing fraw files…');
+  copyFrawFiles({
+    site: { title: site.title || 'BlogSDK', url: site.url || '' },
+  });
 
   // Save manifest for future incremental builds
   fs.writeFileSync(
