@@ -15,21 +15,12 @@
         "contact": "https://github.com/Null-Austin",
         "company": "austinsdk",
         "Name": "Austin Moore"
-      },
-      "test@austinsdk.me": {
-        "contact": "https://github.com/not-a-bot",
-        "company": "bot-co",
-        "Name": "James Smith"
       }
     },
     "companies": {
       "austinsdk": {
         "display": "Austin SDK",
         "contact": "https://github.com/austinsdk"
-      },
-      "bot-co": {
-        "display": "Bot Co.",
-        "contact": "https://github.com/bots"
       }
     }
   }
