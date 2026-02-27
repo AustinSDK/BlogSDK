@@ -17,3 +17,6 @@ npm run build
 ```
 
 - Lastly, you now have an awesome website.
+
+## Contributing
+Feel completely free to make a push request with updated information, ect. Though please add yourself to the config file as an editor!
